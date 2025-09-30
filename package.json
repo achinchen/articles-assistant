@@ -17,7 +17,8 @@
     "db:setup": "bash scripts/db/setup.sh",
     "db:reset": "bash scripts/db/reset.sh",
     "db:shell": "bash scripts/db/shell.sh",
-    "db:status": "ts-node -e \"import { pool } from '@db/client'; pool.query('SELECT COUNT(*) FROM articles').then(r => console.log('Articles:', r.rows[0].count)).catch(e => console.error('Error:', e.message)).finally(() => pool.end());\""
+    "db:status": "ts-node -e \"import { pool } from '@db/client'; pool.query('SELECT COUNT(*) FROM articles').then(r => console.log('Articles:', r.rows[0].count)).catch(e => console.error('Error:', e.message)).finally(() => pool.end());\"",
+    "query": "ts-node cli/query.ts"
   },
   "keywords": [],
   "author": "",

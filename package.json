@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "submodule:init": "bash scripts/setup-submodule.sh",
+    "submodule:update": "cd data && git pull origin $(git remote show origin | grep 'HEAD branch' | cut -d' ' -f5) && cd ../..",
+    "submodule:status": "cd data && echo 'Sparse checkout config:' && cat .git/info/sparse-checkout && echo '' && echo 'Files:' && ls -la && cd ../..",
   },
   "keywords": [],
   "author": "",

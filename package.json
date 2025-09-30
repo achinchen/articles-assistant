@@ -7,6 +7,9 @@
     "submodule:init": "bash scripts/setup-submodule.sh",
     "submodule:update": "cd data && git pull origin $(git remote show origin | grep 'HEAD branch' | cut -d' ' -f5) && cd ../..",
     "submodule:status": "cd data && echo 'Sparse checkout config:' && cat .git/info/sparse-checkout && echo '' && echo 'Files:' && ls -la && cd ../..",
+    "list": "ts-node cli/list.ts",
+    "list:series": "ts-node cli/list.ts series",
+    "list:articles": "ts-node cli/list.ts articles"
   },
   "keywords": [],
   "author": "",
@@ -14,12 +17,16 @@
   "packageManager": "pnpm@10.14.0",
   "dependencies": {
     "dotenv": "^17.2.3",
+    "gpt-3-encoder": "^1.1.4",
+    "gray-matter": "^4.0.3",
+    "openai": "^5.23.2",
     "pg": "^8.16.3"
   },
   "devDependencies": {
     "@types/node": "^24.6.0",
     "@types/pg": "^8.15.5",
     "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.9.2"
   }
 }

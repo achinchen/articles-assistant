@@ -18,6 +18,14 @@ export const logger = {
     step: (current: number, total: number, message: string) => {
       console.log(`[${current}/${total}] ${message}`);
     },
+
+    print: (message: string, ...args: any[]) => {
+      console.log(message, ...args);
+    },
+
+    newline: () => {
+      console.log('');
+    },
     
     section: (title: string) => {
       console.log(`\n${'='.repeat(50)}`);

@@ -9,7 +9,15 @@
     "submodule:status": "cd data && echo 'Sparse checkout config:' && cat .git/info/sparse-checkout && echo '' && echo 'Files:' && ls -la && cd ../..",
     "list": "ts-node cli/list.ts",
     "list:series": "ts-node cli/list.ts series",
-    "list:articles": "ts-node cli/list.ts articles"
+    "list:articles": "ts-node cli/list.ts articles",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "docker:restart": "docker-compose restart",
+    "db:setup": "bash scripts/db/setup.sh",
+    "db:reset": "bash scripts/db/reset.sh",
+    "db:shell": "bash scripts/db/shell.sh",
+    "db:status": "ts-node -e \"import { pool } from '@db/client'; pool.query('SELECT COUNT(*) FROM articles').then(r => console.log('Articles:', r.rows[0].count)).catch(e => console.error('Error:', e.message)).finally(() => pool.end());\""
   },
   "keywords": [],
   "author": "",

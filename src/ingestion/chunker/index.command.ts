@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import * as fs from 'fs';
+import * as path from 'path';
 import { contentConfig } from '@config/content.config';
 import { Chunk, chunkText, countTokens, estimateChunkCount, stripFrontmatter } from '@/ingestion/chunker';
 import { decode, encode } from 'gpt-3-encoder';

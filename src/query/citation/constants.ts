@@ -1,0 +1,1 @@
+export const ARTICLE_URI = 'https://achin.me/posts/';

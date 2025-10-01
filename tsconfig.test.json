@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "types": ["vitest/globals"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@config/*": ["config/*"],
+    }
+  },
+  "include": [
+    "src/**/*",
+    "cli/**/*",
+    "tests/**/*",
+    "tools/**/*",
+    "vitest.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "data"
+  ]
+}

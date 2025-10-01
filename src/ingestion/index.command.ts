@@ -1,4 +1,4 @@
-import { query, pool } from '@db/client';
+import { query, pool } from '@/db/client';
 import { getDatabaseStats, checkDataIntegrity } from '@/db/query';
 import { logger } from '@/utils/logger';
 

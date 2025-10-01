@@ -6,6 +6,7 @@
     "lib": ["ES2020"],
     "module": "commonjs",
     "moduleResolution": "node",
+    "composite": true,
     
     /* Type Checking */
     "strict": true,
@@ -53,5 +54,8 @@
     "require": ["tsconfig-paths/register"],
     "transpileOnly": true,
     "files": true
-  }
+  },
+  "references": [
+    { "path": "./tsconfig.test.json", "composite": true }
+  ]
 }

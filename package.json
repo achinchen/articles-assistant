@@ -4,12 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "// === Submodule ===": "",
     "submodule:init": "bash scripts/setup-submodule.sh",
     "submodule:update": "cd data && git pull origin $(git remote show origin | grep 'HEAD branch' | cut -d' ' -f5) && cd ../..",
     "submodule:status": "cd data && echo 'Sparse checkout config:' && cat .git/info/sparse-checkout && echo '' && echo 'Files:' && ls -la && cd ../..",
-    "list": "ts-node cli/list.ts",
-    "list:series": "ts-node cli/list.ts series",
-    "list:articles": "ts-node cli/list.ts articles",
+    
+    "// === Database ===": "",
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down",
     "docker:logs": "docker-compose logs -f",
@@ -17,13 +17,33 @@
     "db:setup": "bash scripts/db/setup.sh",
     "db:reset": "bash scripts/db/reset.sh",
     "db:shell": "bash scripts/db/shell.sh",
-    "db:status": "ts-node -e \"import { pool } from '@db/client'; pool.query('SELECT COUNT(*) FROM articles').then(r => console.log('Articles:', r.rows[0].count)).catch(e => console.error('Error:', e.message)).finally(() => pool.end());\"",
+    "db:status": "ts-node -e \"import { pool } from '@/db/client'; pool.query('SELECT COUNT(*) FROM articles').then(r => console.log('Articles:', r.rows[0].count)).catch(e => console.error('Error:', e.message)).finally(() => pool.end());\"",
+    
+    "// === Ingestion ===": "",
     "ingest": "ts-node cli/ingest.ts",
     "ingest:fresh": "npm run submodule:update && npm run ingest",
     "ingest:article": "ts-node cli/ingest-article.ts",
+    
+    "// === Query ===": "",
     "query": "ts-node cli/query.ts",
+    "query:help": "ts-node cli/query.ts --help",
+    
+    "// === Info ===": "",
+    "list": "ts-node cli/list.ts",
+    "list:series": "ts-node cli/list.ts series",
+    "list:articles": "ts-node cli/list.ts articles",
     "stats": "ts-node cli/stats.ts",
-    "cost": "ts-node tools/estimate-cost.ts"
+    
+    "// === Tools ===": "",
+    "cost": "ts-node tools/estimate-cost.ts",
+
+    "// === Testing ===": "",
+    "test": "vitest",
+    "test:unit": "vitest --run src",
+    "test:integration": "vitest --run tests/integration",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage"
   },
   "keywords": [],
   "author": "",
@@ -39,8 +59,10 @@
   "devDependencies": {
     "@types/node": "^24.6.0",
     "@types/pg": "^8.15.5",
+    "@vitest/ui": "^3.2.4",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
   }
 }

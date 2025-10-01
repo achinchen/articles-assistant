@@ -4,7 +4,7 @@ export interface SeriesMetadata {
     description: string;
     status: 'draft' | 'in-progress' | 'completed';
     intro?: string;
-    locale: string;
+    locale: Locale;
     id: string;
   }
   
@@ -18,7 +18,7 @@ export interface SeriesMetadata {
       title?: string;
       date?: string;
       series?: string;
-      locale?: string;
+      locale?: Locale;
       tags?: string[];
       [key: string]: any;
     };
@@ -27,3 +27,5 @@ export interface SeriesMetadata {
   export interface ArticleWithSeries extends ArticleMetadata {
     series?: SeriesMetadata;
   }
+
+  export type Locale = 'zh' | 'en';

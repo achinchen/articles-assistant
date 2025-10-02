@@ -22,12 +22,10 @@ export async function query(input: QueryInput): Promise<QueryResponse> {
   logger.info(`Query language detected: ${queryLocale}`);
   logger.info(`Using config: topK=${config.topK}, model=${config.model}, threshold=${config.similarityThreshold}`);
   
-  // Determine search method
   const searchMethod = input.useHybridSearch ? 'hybrid' : 'vector';
   logger.info(`Search method: ${searchMethod}`);
   
   try {
-    // Step 1: Retrieval
     logger.info('=== Step 1: Retrieval ===');
     const chunks = input.useHybridSearch
       ? await hybridRetrieveChunks(input.query, input.locale, config as any)
@@ -60,11 +58,9 @@ export async function query(input: QueryInput): Promise<QueryResponse> {
       };
     }
     
-    // Step 2: Augmentation
     logger.info('=== Step 2: Augmentation ===');
     const context = buildContext(chunks, config, queryLocale);
     
-    // Step 3: Generation
     logger.info('=== Step 3: Generation ===');
     const generation = await generateAnswer(
       input.query,
@@ -72,7 +68,6 @@ export async function query(input: QueryInput): Promise<QueryResponse> {
       config
     );
     
-    // Step 4: Citation
     logger.info('=== Step 4: Citation ===');
     const sources = buildSources(context.chunks);
     

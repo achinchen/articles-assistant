@@ -1,8 +1,8 @@
 import OpenAI from 'openai';
 import { QueryConfig, GenerationResult } from '@/query/types';
-import { SYSTEM_PROMPT, buildUserMessage } from '@/query/prompts';
 import { logger } from '@/utils/logger';
 import { env } from '@/utils/env';
+import { SYSTEM_PROMPT, buildUserMessage } from './prompts';
 
 const openai = new OpenAI({
   apiKey: env.OPENAI_API_KEY,

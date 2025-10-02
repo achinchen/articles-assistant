@@ -21,11 +21,13 @@ export const env = {
   DB_CONTAINER_NAME: process.env.DB_CONTAINER_NAME || 'articles-assistant-db',
   OPENAI_API_KEY: process.env.OPENAI_API_KEY || '',
   NODE_ENV: process.env.NODE_ENV || 'development',
+  PORT: Number(process.env.PORT) || 3000,
+  CORS_ORIGIN: process.env.CORS_ORIGIN || '*',
+  RATE_LIMIT_PER_MINUTE: parseInt(process.env.RATE_LIMIT_PER_MINUTE || '20'),
   
   validate() {
     const missing: string[] = [];
 
-    // In production, require OPENAI_API_KEY
     if ((process.env.NODE_ENV || 'development') === 'production' && !this.OPENAI_API_KEY) {
       missing.push('OPENAI_API_KEY');
     }

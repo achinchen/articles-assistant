@@ -14,7 +14,6 @@ export interface DatabaseStats {
 }
 
 export async function getDatabaseStats(): Promise<DatabaseStats> {
-  // Total counts
   const totals = await query(`
     SELECT 
       COUNT(DISTINCT a.id) as article_count,
@@ -25,7 +24,6 @@ export async function getDatabaseStats(): Promise<DatabaseStats> {
     LEFT JOIN embeddings e ON c.id = e.chunk_id
   `);
 
-  // By locale
   const byLocale = await query(`
     SELECT locale, COUNT(*) as count
     FROM articles
@@ -33,7 +31,6 @@ export async function getDatabaseStats(): Promise<DatabaseStats> {
     ORDER BY locale
   `);
 
-  // By series
   const bySeries = await query(`
     SELECT 
       frontmatter->>'series' as series_slug,

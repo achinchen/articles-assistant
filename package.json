@@ -8,7 +8,6 @@
     "submodule:init": "bash scripts/setup-submodule.sh",
     "submodule:update": "cd data && git pull origin $(git remote show origin | grep 'HEAD branch' | cut -d' ' -f5) && cd ../..",
     "submodule:status": "cd data && echo 'Sparse checkout config:' && cat .git/info/sparse-checkout && echo '' && echo 'Files:' && ls -la && cd ../..",
-    
     "// === Database ===": "",
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down",
@@ -18,25 +17,25 @@
     "db:reset": "bash scripts/db/reset.sh",
     "db:shell": "bash scripts/db/shell.sh",
     "db:status": "ts-node -e \"import { pool } from '@/db/client'; pool.query('SELECT COUNT(*) FROM articles').then(r => console.log('Articles:', r.rows[0].count)).catch(e => console.error('Error:', e.message)).finally(() => pool.end());\"",
-    
+    "// === API Server ===": "",
+    "api:dev": "ts-node cli/api.ts",
+    "api:start": "NODE_ENV=production ts-node cli/api.ts",
+    "api:build": "tsc -p tsconfig.json",
+    "api:prod": "node dist/cli/api.js",
     "// === Ingestion ===": "",
     "ingest": "ts-node cli/ingest.ts",
     "ingest:fresh": "npm run submodule:update && npm run ingest",
     "ingest:article": "ts-node cli/ingest-article.ts",
-    
     "// === Query ===": "",
     "query": "ts-node cli/query.ts",
     "query:help": "ts-node cli/query.ts --help",
-    
     "// === Info ===": "",
     "list": "ts-node cli/list.ts",
     "list:series": "ts-node cli/list.ts series",
     "list:articles": "ts-node cli/list.ts articles",
     "stats": "ts-node cli/stats.ts",
-    
     "// === Tools ===": "",
     "cost": "ts-node tools/estimate-cost.ts",
-
     "// === Testing ===": "",
     "test": "vitest",
     "test:unit": "vitest --run src",
@@ -50,19 +49,27 @@
   "license": "ISC",
   "packageManager": "pnpm@10.14.0",
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
     "gpt-3-encoder": "^1.1.4",
     "gray-matter": "^4.0.3",
+    "helmet": "^8.1.0",
     "openai": "^5.23.2",
     "pg": "^8.16.3"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
     "@types/node": "^24.6.0",
     "@types/pg": "^8.15.5",
+    "@types/supertest": "^6.0.3",
     "@vitest/ui": "^3.2.4",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.9.2",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.4",
+    "supertest": "^7.1.4"
   }
 }

@@ -1,16 +1,15 @@
 {
+  "extends": "./tsconfig.json",
   "compilerOptions": {
-    "composite": true,
-    "types": ["vitest/globals"],
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"],
-      "@config/*": ["config/*"],
-    }
+    "types": ["vitest/globals", "node", "@types/supertest"],
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
   },
   "include": [
-    "src/**/*",
-    "cli/**/*",
+    "src/**/*.test.ts",
+    "src/**/*.ts",
     "tests/**/*",
     "tools/**/*",
     "vitest.d.ts"

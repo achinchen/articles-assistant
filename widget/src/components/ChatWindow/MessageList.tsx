@@ -1,6 +1,6 @@
 import Message from './Message';
 import TypingIndicator from './TypingIndicator';
-import type { Message as MessageType } from '@/components/Widget/types';
+import type { Message as MessageType } from '@/components/types';
 
 interface MessageListProps {
   messages: MessageType[];

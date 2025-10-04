@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import type { Message } from '@/components/Widget/types';
+import type { Message } from '@/components/types';
 import { askQuestion } from './utils/api';
 
 export function useChat(apiUrl: string) {

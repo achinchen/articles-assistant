@@ -27,5 +27,5 @@ export interface WidgetConfig {
 
 export interface SDKOptions {
   config: WidgetConfig;
-  container?: HTMLElement | string;
+  container?: string;
 }

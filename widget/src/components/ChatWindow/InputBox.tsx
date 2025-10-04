@@ -12,7 +12,6 @@ interface InputBoxProps {
 export default function InputBox({
   onSend: propsOnSend,
   disabled = false,
-  placeholder,
 }: InputBoxProps) {
   const { t } = useLocale();
   const [value, setValue] = useState('');
@@ -23,7 +22,6 @@ export default function InputBox({
     if (trimmed && !disabled) {
       propsOnSend(trimmed);
       setValue('');
-      // Reset textarea height
       if (textareaRef.current) {
         textareaRef.current.style.height = 'auto';
       }
@@ -52,7 +50,7 @@ export default function InputBox({
           value={value}
           onChange={onInput}
           onKeyDown={onKeyDown}
-          placeholder={placeholder || t('inputPlaceholder')}
+          placeholder={t('inputPlaceholder')}
           disabled={disabled}
           rows={1}
           className={clsx(
@@ -85,7 +83,7 @@ export default function InputBox({
       </div>
 
       <div className="mt-2 text-xs text-gray-500 text-center">
-        Press <kbd className="px-1.5 py-0.5 bg-gray-100 rounded text-gray-600">Enter</kbd> to send, <kbd className="px-1.5 py-0.5 bg-gray-100 rounded text-gray-600">Shift+Enter</kbd> for new line
+        {t('keyboardShortcuts')}
       </div>
     </div>
   );

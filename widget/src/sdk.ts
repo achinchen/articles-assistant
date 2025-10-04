@@ -1,10 +1,9 @@
+import type { WidgetConfig, SDKOptions } from './components/types';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import Widget from './components/Widget';
-import ChatWindow from './components/Widget/ChatWindow';
-import type { WidgetConfig, SDKOptions } from './components/Widget/types';
+import Widget from './App';
 import './styles/globals.css';
-import { ARTICLES_ASSISTANT_EVENTS, ROOT_ID } from './constants';
+import { FRAME_ID } from './constants';
 
 declare global {
   interface Window {
@@ -16,8 +15,7 @@ declare global {
 }
 
 class ArticlesAssistantSDK {
-  private widgetRoot: ReactDOM.Root | null = null;
-  private widgetContainer: HTMLElement | null = null;
+  private frame: HTMLElement | null = null;
   private iframe: HTMLIFrameElement | null = null;
   private iframeRoot: ReactDOM.Root | null = null;
 
@@ -30,40 +28,80 @@ class ArticlesAssistantSDK {
     }
 
     this.destroy();
-
-    // Create and render the Widget component for the floating button
-    this.createWidget(config, container);
-    
-    // Set up event listeners for iframe management
-    this.setupEventListeners();
+    this.create(config, container);
   }
 
-  private createWidget(config: WidgetConfig, container?: HTMLElement | string) {
-    let targetElement: HTMLElement;
+  private create(config: WidgetConfig, container?: string) {
+    this.createFrame(container);
+    this.createIframe(config);
+  }
 
+  private createFrame(container?: string) {
+    if (this.frame) return;
+    this.frame = document.createElement('div');
+    this.frame.id = FRAME_ID;
+
+    let target: HTMLElement;
     if (container) {
-      if (typeof container === 'string') {
-        const element = document.querySelector(container) as HTMLElement;
-        if (!element) {
-          console.error(`ArticlesAssistant: Container element "${container}" not found`);
-          return;
-        }
-        targetElement = element;
-      } else {
-        targetElement = container;
+      target = document.querySelector(container) as HTMLElement;
+      if (!target) {
+        return console.error(`ArticlesAssistant: Container element "${container}" not found`);
       }
     } else {
-      targetElement = document.createElement('div');
-      targetElement.id = ROOT_ID;
-      
-      const node = config?.target ? document.querySelector(config?.target) as HTMLElement : document.body;
-      node.appendChild(targetElement);
+      target = document.body;
     }
-
-    this.widgetContainer = targetElement;
-    this.widgetRoot = ReactDOM.createRoot(targetElement);
     
-    this.widgetRoot.render(
+    target.appendChild(this.frame);
+  }
+
+  private createIframe(config: WidgetConfig) {
+    if (this.iframe || !this.frame) return;
+
+    this.addResponsiveStyles();
+    
+    this.iframe = document.createElement('iframe');
+    this.iframe.id = 'articles-assistant-chat-iframe';
+    this.iframe.className = 'articles-assistant-iframe';
+
+    this.frame.appendChild(this.iframe);
+
+    this.iframe.onload = () => {
+      const iframeDoc = this.iframe!.contentDocument || this.iframe!.contentWindow?.document;
+      if (!iframeDoc) return;
+
+      const parentStyles = Array.from(document.styleSheets)
+        .map(sheet => {
+          try {
+            return Array.from(sheet.cssRules).map(rule => rule.cssText).join('\n');
+          } catch (e) {
+            return '';
+          }
+        })
+        .join('\n');
+
+      iframeDoc.documentElement.innerHTML = `
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <title>Articles Assistant Chat</title>
+          <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            html, body { height: 100%; font-family: system-ui, -apple-system, sans-serif; }
+            #root { height: 100%; }
+            ${parentStyles}
+          </style>
+        </head>
+        <body>
+          <div id="root"></div>
+        </body>
+      `;
+
+    };
+
+    this.iframe.src = 'about:blank';    
+    this.iframeRoot = ReactDOM.createRoot(this.frame);
+    
+    this.iframeRoot.render(
       React.createElement(React.StrictMode, null,
         React.createElement(Widget, {
           apiUrl: config.apiUrl,
@@ -71,28 +109,13 @@ class ArticlesAssistantSDK {
           position: config.position,
           greeting: config.greeting,
           target: config.target,
+          locale: config.locale,
         })
       )
     );
   }
 
-  private setupEventListeners() {
-    document.addEventListener(ARTICLES_ASSISTANT_EVENTS.OPEN_IFRAME, this.openIframe.bind(this) as EventListener);
-    document.addEventListener(ARTICLES_ASSISTANT_EVENTS.CLOSE_IFRAME, this.closeIframe.bind(this) as EventListener);
-  }
-
-  private openIframe(event: Event) {
-    const customEvent = event as CustomEvent;
-    const { apiUrl, greeting } = customEvent.detail;
-    this.createIframe(apiUrl, greeting);
-  }
-
-  private closeIframe() {
-    this.destroyIframe();
-  }
-
   private addResponsiveStyles() {
-    // Check if styles already exist
     if (document.getElementById('articles-assistant-styles')) return;
 
     const style = document.createElement('style');
@@ -131,77 +154,6 @@ class ArticlesAssistantSDK {
     `;
     document.head.appendChild(style);
   }
-
-  private createIframe(apiUrl: string, greeting: string) {
-    if (this.iframe) return;
-
-    this.addResponsiveStyles();
-
-    this.iframe = document.createElement('iframe');
-    this.iframe.id = 'articles-assistant-chat-iframe';
-    this.iframe.className = 'articles-assistant-iframe';
-
-    document.body.appendChild(this.iframe);
-
-    this.iframe.onload = () => {
-      const iframeDoc = this.iframe!.contentDocument || this.iframe!.contentWindow?.document;
-      if (!iframeDoc) return;
-
-      const parentStyles = Array.from(document.styleSheets)
-        .map(sheet => {
-          try {
-            return Array.from(sheet.cssRules).map(rule => rule.cssText).join('\n');
-          } catch (e) {
-            return '';
-          }
-        })
-        .join('\n');
-
-      iframeDoc.documentElement.innerHTML = `
-        <head>
-          <meta charset="utf-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1">
-          <title>Articles Assistant Chat</title>
-          <style>
-            * { margin: 0; padding: 0; box-sizing: border-box; }
-            html, body { height: 100%; font-family: system-ui, -apple-system, sans-serif; }
-            #root { height: 100%; }
-            ${parentStyles}
-          </style>
-        </head>
-        <body>
-          <div id="root"></div>
-        </body>
-      `;
-
-      requestAnimationFrame(() => {
-        const rootElement = iframeDoc.getElementById('root');
-        if (rootElement) {
-          this.iframeRoot = ReactDOM.createRoot(rootElement);
-          this.iframeRoot.render(
-            React.createElement(React.StrictMode, null,
-              React.createElement('div', {
-                className: 'w-full h-full',
-                style: { minHeight: '400px' }
-              },
-              React.createElement(ChatWindow, {
-                apiUrl: apiUrl,
-                greeting: greeting,
-                onClose: () => {
-                  document.dispatchEvent(new CustomEvent('articles-assistant-close-iframe'));
-                },
-                onNewMessage: () => {}
-              })
-              )
-            )
-          );
-        }
-      });
-    };
-
-    this.iframe.src = 'about:blank';
-  }
-
   private destroyIframe() {
     if (this.iframeRoot) {
       this.iframeRoot.unmount();
@@ -217,21 +169,18 @@ class ArticlesAssistantSDK {
   destroy() {
     this.destroyIframe();
 
-    if (this.widgetRoot) {
-      this.widgetRoot.unmount();
-      this.widgetRoot = null;
+    if (this.iframeRoot && this.iframe) {
+      this.iframeRoot.unmount();
+      this.iframeRoot = null;
     }
 
-    if (this.widgetContainer && this.widgetContainer.id === ROOT_ID) {
-      this.widgetContainer.remove();
-      this.widgetContainer = null;
+    if (this.iframe && this.iframe.id === FRAME_ID) {
+      this.iframe.remove();
+      this.iframe = null;
     }
 
     const styleElement = document.getElementById('articles-assistant-styles');
     if (styleElement) styleElement.remove();
-
-    document.removeEventListener(ARTICLES_ASSISTANT_EVENTS.OPEN_IFRAME, this.openIframe.bind(this) as EventListener);
-    document.removeEventListener(ARTICLES_ASSISTANT_EVENTS.CLOSE_IFRAME, this.closeIframe.bind(this) as EventListener);
   }
 }
 
@@ -242,7 +191,6 @@ window.ArticlesAssistantSDK = {
   destroy: () => sdk.destroy(),
 };
 
-// Auto-initialize if global config exists
 if (window.ArticlesAssistant) {
   sdk.init({ config: window.ArticlesAssistant });
 }

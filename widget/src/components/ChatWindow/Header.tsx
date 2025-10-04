@@ -1,10 +1,12 @@
 import { MessageCircle, X } from 'lucide-react';
+import { useLocale } from '@/contexts/LocaleContext';
 
 interface HeaderProps {
   onClose: () => void;
 }
 
 export default function Header({ onClose }: HeaderProps) {
+  const { t } = useLocale();
   return (
     <div className="flex items-center justify-between px-4 py-3 bg-[var(--primary)] text-white">
       <div className="flex items-center gap-3">
@@ -12,8 +14,8 @@ export default function Header({ onClose }: HeaderProps) {
           <MessageCircle />
         </div>
         <div>
-          <h3 className="font-semibold text-sm">Articles Assistant</h3>
-          <p className="text-xs opacity-90">Ask me anything</p>
+          <h3 className="font-semibold text-sm">{t('title')}</h3>
+          <p className="text-xs opacity-90">{t('subtitle')}</p>
         </div>
       </div>
 

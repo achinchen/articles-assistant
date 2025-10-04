@@ -1,8 +1,8 @@
-import Widget from './components/Widget';
+import Widget from './components';
 import './styles/globals.css';
 import { LocaleProvider } from './contexts/LocaleContext';
 
-import type { WidgetConfig } from './components/Widget/types';
+import type { WidgetConfig } from './components/types';
 
 declare global {
   interface Window {

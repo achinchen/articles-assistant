@@ -1,4 +1,4 @@
-import type { Source } from '@/components/Widget/types';
+import type { Source } from '@/components/types';
 import { ExternalLink } from 'lucide-react';
 
 interface SourceCardProps {

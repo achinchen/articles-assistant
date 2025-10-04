@@ -1,7 +1,8 @@
 import clsx from 'clsx';
-import type { Message as MessageType } from '@/components/Widget/types';
+import type { Message as MessageType } from '@/components/types';
 import SourceCard from './SourceCard';
 import { parseCitations, formatTimestamp } from './utils';
+import { useLocale } from '@/contexts/LocaleContext';
 
 interface MessageProps {
   message: MessageType;
@@ -10,6 +11,7 @@ interface MessageProps {
 export default function Message({ message }: MessageProps) {
   const isUser = message.role === 'user';
   const isSystem = message.role === 'system';
+  const { t } = useLocale();
   
   const { text } = parseCitations(message.content);
 
@@ -52,7 +54,7 @@ export default function Message({ message }: MessageProps) {
         {message.status === 'error' && (
           <div className="mt-2 text-xs text-red-500 flex items-center gap-1">
             <span>⚠</span>
-            <span>Failed to send</span>
+            <span>{t('failedToSend')}</span>
           </div>
         )}
       </div>

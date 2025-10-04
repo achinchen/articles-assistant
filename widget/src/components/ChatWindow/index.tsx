@@ -9,13 +9,11 @@ import { useLocale } from '@/contexts/LocaleContext';
 interface ChatWindowProps {
   apiUrl: string;
   onClose: () => void;
-  onNewMessage?: () => void;
 }
 
 export default function ChatWindow({
   apiUrl,
   onClose,
-  onNewMessage,
 }: ChatWindowProps) {
   const { messages, isLoading, sendMessage, error } = useChat(apiUrl);
   const { t } = useLocale();
@@ -24,21 +22,17 @@ export default function ChatWindow({
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    if (onNewMessage) onNewMessage();
-  }, [messages, onNewMessage]);
+  }, [messages]);
 
   return (
     <div
       className={clsx(
-        'bg-white shadow-2xl flex flex-col overflow-hidden rounded-xl',
-        'md:w-[400px] md:h-[600px]',
+        'bg-white shadow-2xl flex flex-col overflow-hidden md:rounded-xl z-50',
+        'w-screen h-screen md:w-[400px] md:h-[600px]',
         'fixed md:relative inset-0 md:inset-auto',
-        'w-screen h-screen md:w-auto md:h-auto',
-        'lt-md:rounded-none'
       )}
     >
       <Header onClose={onClose} />
-
       {messages.length === 0 ? (
         <div className="flex-1 flex items-center justify-center px-4 py-2 bg-gray-50 border-t border-gray-200 text-sm text-gray-600">
           {t('greeting')}

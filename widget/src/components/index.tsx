@@ -1,16 +1,16 @@
-import type { WidgetConfig } from './types';
-import { useEffect } from 'react';
+import type { WidgetConfig } from './Widget/types';
+import { Suspense, useEffect } from 'react';
 import FloatingButton from './FloatingButton';
+import ChatWindow from './ChatWindow';
 import { useWidget } from './hooks/useWidget';
-import { ARTICLES_ASSISTANT_EVENTS } from '@/constants';
 
 interface WidgetProps extends WidgetConfig {}
 
 export default function Widget({
-  apiUrl,
   primaryColor = '#0066FF',
   position = 'right',
-  greeting = 'Hi! How can I help you?',
+  apiUrl,
+  locale,
 }: WidgetProps) {
   const { isOpen, toggle, close } = useWidget();
 
@@ -30,23 +30,29 @@ export default function Widget({
 
   const onToggle = () => {
     if (isOpen) {
-      document.dispatchEvent(new CustomEvent(ARTICLES_ASSISTANT_EVENTS.CLOSE_IFRAME));
       close();
     } else {
-      document.dispatchEvent(new CustomEvent(ARTICLES_ASSISTANT_EVENTS.OPEN_IFRAME, {
-        detail: { apiUrl, greeting }
-      }));
       toggle();
     }
   };
 
   return (
     <div 
-      className={`fixed z-50 ${
-        position === 'right' ? 'bottom-6 right-6' : 'bottom-6 left-6'
+      className={`fixed z-50 flex flex-col gap-6 ${
+        position === 'right' ? 'bottom-6 right-6 items-end' : 'bottom-6 left-6'
       }`}
       style={{ '--primary': primaryColor } as React.CSSProperties}
     >
+      <Suspense fallback={<div>Loading...</div>}>
+        {
+          isOpen && (
+            <ChatWindow
+              apiUrl={apiUrl}
+              onClose={close}
+            />
+          )
+        }
+      </Suspense>
       <FloatingButton
         isOpen={isOpen}
         onClick={onToggle}

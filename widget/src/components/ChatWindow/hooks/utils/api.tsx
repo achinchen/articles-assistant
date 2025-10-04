@@ -1,4 +1,4 @@
-import type { Source } from "@/components/Widget/types";
+import type { Source } from "@/components/types";
 
 export interface ApiResponse {
     success: boolean;

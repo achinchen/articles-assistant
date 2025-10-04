@@ -1,4 +1,4 @@
-import type { Message } from '@/components/Widget/types';
+import type { Message } from '@/components/types';
 
 const STORAGE_KEY = 'articles-assistant-chat';
   

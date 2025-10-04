@@ -22,6 +22,7 @@ export interface WidgetConfig {
   position?: 'right' | 'left';
   greeting?: string;
   target?: string;
+  locale?: string;
 }
 
 export interface SDKOptions {

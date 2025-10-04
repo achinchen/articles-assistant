@@ -35,18 +35,10 @@ export default defineConfig(({ command }) => {
         input: {
           widget: resolve(__dirname, 'src/main.tsx'),
           sdk: resolve(__dirname, 'src/sdk.ts'),
-          embed: resolve(__dirname, 'src/embed.ts'),
         },
         output: {
           entryFileNames: '[name].js',
           assetFileNames: 'widget.css',
-          format: 'iife',
-          name: (chunkInfo: { name?: string }) => {
-            if (chunkInfo.name === 'widget') return 'Widget';
-            if (chunkInfo.name === 'sdk') return 'SDK';
-            if (chunkInfo.name === 'embed') return 'Embed';
-            return 'Widget';
-          },
         },
       },
       outDir: 'dist',

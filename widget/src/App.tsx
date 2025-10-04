@@ -1,5 +1,6 @@
 import Widget from './components/Widget';
 import './styles/globals.css';
+import { LocaleProvider } from './contexts/LocaleContext';
 
 import type { WidgetConfig } from './components/Widget/types';
 
@@ -15,13 +16,16 @@ function App() {
   };
 
   return (
-    <Widget
-      apiUrl={config.apiUrl}
-      primaryColor={config.primaryColor}
-      position={config.position}
-      greeting={config.greeting}
-      target={config.target}
-    />
+    <LocaleProvider locale={config.locale}>
+      <Widget
+        apiUrl={config.apiUrl}
+        primaryColor={config.primaryColor}
+        position={config.position}
+        greeting={config.greeting}
+        target={config.target}
+        locale={config.locale}
+      />
+    </LocaleProvider>
   );
 }
 

@@ -1,6 +1,7 @@
 import { useState, useRef, type KeyboardEvent } from 'react';
 import { Send } from 'lucide-react';
 import clsx from 'clsx';
+import { useLocale } from '@/contexts/LocaleContext';
 
 interface InputBoxProps {
   onSend: (message: string) => void;
@@ -11,8 +12,9 @@ interface InputBoxProps {
 export default function InputBox({
   onSend: propsOnSend,
   disabled = false,
-  placeholder = 'Type your message...',
+  placeholder,
 }: InputBoxProps) {
+  const { t } = useLocale();
   const [value, setValue] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -50,7 +52,7 @@ export default function InputBox({
           value={value}
           onChange={onInput}
           onKeyDown={onKeyDown}
-          placeholder={placeholder}
+          placeholder={placeholder || t('inputPlaceholder')}
           disabled={disabled}
           rows={1}
           className={clsx(
@@ -76,7 +78,7 @@ export default function InputBox({
             'hover:scale-110 active:scale-95',
             'focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/50'
           )}
-          aria-label="Send message"
+          aria-label={t('sendButton')}
         >
           <Send className="w-5 h-5" />
         </button>

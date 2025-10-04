@@ -40,12 +40,13 @@ router.post('/', async (req, res, next) => {
       success: true,
       data: {
         answer: result.answer,
-        sources: result.sources.map(({ id, articleSlug, articleTitle, similarity, locale }) => ({
+        sources: result.sources.map(({ id, articleSlug, articleTitle, similarity, locale, url }) => ({
           id,
           articleSlug,
           articleTitle,
           similarity,
           locale,
+          url,
         })),
         metadata: {
           ...result.metadata,

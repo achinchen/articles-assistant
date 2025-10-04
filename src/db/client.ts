@@ -4,7 +4,6 @@ import { logger } from '@/utils/logger';
 
 function buildPool(): Pool {
   try {
-    // Prefer explicit fields; avoid relying on URL parsing
     const host = env.POSTGRES_HOST;
     const port = env.POSTGRES_PORT;
     const user = env.POSTGRES_USER;
@@ -13,7 +12,6 @@ function buildPool(): Pool {
 
     return new Pool({ host, port, user, password, database });
   } catch {
-    // Fallback to DATABASE_URL only if present
     if (env.DATABASE_URL && env.DATABASE_URL.trim().length > 0) {
       return new Pool({ connectionString: env.DATABASE_URL });
     }

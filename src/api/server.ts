@@ -10,13 +10,23 @@ import statsRouter from './routes/stats';
 import { errorMiddleware } from './routes/middle/error';
 import { loggerMiddleware } from './routes/middle/logger';
 
-export function createServer(): Express {
+export function createServer(port: number): Express {
   const app = express();
   
   app.use(helmet());
   
   const corsOptions = {
-    origin: env.CORS_ORIGIN || '*',
+    origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+      const allowedOrigins = env.CORS_ORIGINS || '';
+      
+      if (!origin) return callback(null, true);
+      
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     methods: ['GET', 'POST', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
@@ -75,10 +85,37 @@ export function createServer(): Express {
   return app;
 }
 
-export function startServer(port: number = 3000): void {
-  const app = createServer();
+export function startServer(port: number): void {
+  const app = createServer(port);
   
-  app.listen(port, () => {
+  const server = app.listen(port, () => {
     logger.info(`🚀 Server running on http://localhost:${port}`);
+  });
+
+  // Handle server errors gracefully
+  server.on('error', (error: any) => {
+    if (error.code === 'EADDRINUSE') {
+      logger.error(`Port ${port} is already in use. Please try a different port.`);
+    } else {
+      logger.error('Server error:', error);
+    }
+    process.exit(1);
+  });
+
+  // Graceful shutdown
+  process.on('SIGTERM', () => {
+    logger.info('SIGTERM received, shutting down server...');
+    server.close(() => {
+      logger.info('Server closed');
+      process.exit(0);
+    });
+  });
+
+  process.on('SIGINT', () => {
+    logger.info('SIGINT received, shutting down server...');
+    server.close(() => {
+      logger.info('Server closed');
+      process.exit(0);
+    });
   });
 }

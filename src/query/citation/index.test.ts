@@ -37,11 +37,85 @@ import { ARTICLE_URI } from './constants';
       });
     });
     
-    it('should assign sequential IDs', () => {
-      const sources = buildSources([...mockChunks, ...mockChunks]);
+    it('should deduplicate by articleSlug and use highest similarity', () => {
+      const chunksWithDuplicates: RetrievedChunk[] = [
+        {
+          chunkId: '1',
+          articleId: 'a1',
+          articleSlug: 'test-article',
+          articleTitle: 'Test Article',
+          content: 'Content chunk 1',
+          similarity: 0.8,
+          locale: 'zh',
+          chunkIndex: 0,
+          tokenCount: 100,
+        },
+        {
+          chunkId: '2',
+          articleId: 'a1',
+          articleSlug: 'test-article',
+          articleTitle: 'Test Article',
+          content: 'Content chunk 2',
+          similarity: 0.9,
+          locale: 'zh',
+          chunkIndex: 1,
+          tokenCount: 100,
+        },
+        {
+          chunkId: '3',
+          articleId: 'a2',
+          articleSlug: 'another-article',
+          articleTitle: 'Another Article',
+          content: 'Another content',
+          similarity: 0.7,
+          locale: 'zh',
+          chunkIndex: 0,
+          tokenCount: 100,
+        },
+      ];
       
-      expect(sources[0].id).toBe(1);
-      expect(sources[1].id).toBe(2);
+      const sources = buildSources(chunksWithDuplicates);
+      
+      expect(sources).toHaveLength(2);
+      expect(sources[0].articleSlug).toBe('test-article');
+      expect(sources[0].similarity).toBe(0.9); // Highest similarity chunk
+      expect(sources[0].chunkContent).toBe('Content chunk 2');
+      expect(sources[1].articleSlug).toBe('another-article');
+      expect(sources[1].similarity).toBe(0.7);
+    });
+    
+    it('should sort sources by similarity descending', () => {
+      const chunks: RetrievedChunk[] = [
+        {
+          chunkId: '1',
+          articleId: 'a1',
+          articleSlug: 'low-similarity',
+          articleTitle: 'Low Similarity Article',
+          content: 'Content 1',
+          similarity: 0.5,
+          locale: 'zh',
+          chunkIndex: 0,
+          tokenCount: 100,
+        },
+        {
+          chunkId: '2',
+          articleId: 'a2',
+          articleSlug: 'high-similarity',
+          articleTitle: 'High Similarity Article',
+          content: 'Content 2',
+          similarity: 0.9,
+          locale: 'zh',
+          chunkIndex: 0,
+          tokenCount: 100,
+        },
+      ];
+      
+      const sources = buildSources(chunks);
+      
+      expect(sources[0].articleSlug).toBe('high-similarity');
+      expect(sources[0].similarity).toBe(0.9);
+      expect(sources[1].articleSlug).toBe('low-similarity');
+      expect(sources[1].similarity).toBe(0.5);
     });
   });
   

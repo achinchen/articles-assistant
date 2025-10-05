@@ -5,18 +5,38 @@ import { ARTICLE_URI } from '@/query/citation/constants';
 /**
  * Build source list from chunks used in context
  * @param chunks - The retrieved chunks
- * @returns The source list
+ * @returns The source list with deduplicated articleSlug
  */
 export function buildSources(chunks: RetrievedChunk[]): Source[] {
-  return chunks.map((chunk, index) => ({
-    id: index + 1,
-    articleSlug: chunk.articleSlug,
-    articleTitle: chunk.articleTitle,
-    chunkContent: chunk.content,
-    similarity: chunk.similarity,
-    locale: chunk.locale,
-    url: `${ARTICLE_URI}${chunk.articleSlug}`
-  }));
+  const articleMap = new Map<string, RetrievedChunk[]>();
+  
+  chunks.forEach(chunk => {
+    if (!articleMap.has(chunk.articleSlug)) {
+      articleMap.set(chunk.articleSlug, []);
+    }
+    articleMap.get(chunk.articleSlug)!.push(chunk);
+  });
+  
+  const sources: Source[] = [];
+  let id = 1;
+  
+  articleMap.forEach((articleChunks) => {
+    const bestChunk = articleChunks.reduce((best, current) => 
+      current.similarity > best.similarity ? current : best
+    );
+    
+    sources.push({
+      id: id++,
+      articleSlug: bestChunk.articleSlug,
+      articleTitle: bestChunk.articleTitle,
+      chunkContent: bestChunk.content,
+      similarity: bestChunk.similarity,
+      locale: bestChunk.locale,
+      url: `${ARTICLE_URI}${bestChunk.articleSlug}`
+    });
+  });
+
+  return sources.sort((a, b) => b.similarity - a.similarity);
 }
 
 /**

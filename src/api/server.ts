@@ -15,18 +15,26 @@ export function createServer(port: number): Express {
   
   app.use(helmet());
   
+  // Custom CORS middleware with JSON error response
+  app.use((req, res, next) => {
+    const origin = req.headers.origin;
+    const allowedOrigins = env.CORS_ORIGINS;
+    
+    if (origin && !allowedOrigins.includes(origin)) {
+      return res.status(403).json({
+        success: false,
+        error: {
+          code: 'CORS_NOT_ALLOWED',
+          message: `Origin ${origin} not allowed by CORS policy`,
+        },
+      });
+    }
+    
+    next();
+  });
+  
   const corsOptions = {
-    origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-      const allowedOrigins = env.CORS_ORIGINS || '';
-      
-      if (!origin) return callback(null, true);
-      
-      if (allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
+    origin: env.CORS_ORIGINS,
     methods: ['GET', 'POST', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
@@ -102,7 +110,6 @@ export function startServer(port: number): void {
     process.exit(1);
   });
 
-  // Graceful shutdown
   process.on('SIGTERM', () => {
     logger.info('SIGTERM received, shutting down server...');
     server.close(() => {

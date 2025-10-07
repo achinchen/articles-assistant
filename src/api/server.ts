@@ -9,6 +9,8 @@ import healthRouter from './routes/health';
 import statsRouter from './routes/stats';
 import { errorMiddleware } from './routes/middle/error';
 import { loggerMiddleware } from './routes/middle/logger';
+import analyticsRouter from './routes/analytics';
+import feedbackRouter from './routes/feedback';
 
 export function createServer(port: number): Express {
   const app = express();
@@ -65,6 +67,8 @@ export function createServer(port: number): Express {
   app.use('/api/ask', askRouter);
   app.use('/api/health', healthRouter);
   app.use('/api/stats', statsRouter);
+  app.use('/api/analytics', analyticsRouter);
+  app.use('/api/feedback', feedbackRouter);
   
   app.get('/', (req, res) => {
     res.json({

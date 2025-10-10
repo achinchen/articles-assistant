@@ -104,7 +104,6 @@ export function startServer(port: number): void {
     logger.info(`🚀 Server running on http://localhost:${port}`);
   });
 
-  // Handle server errors gracefully
   server.on('error', (error: any) => {
     if (error.code === 'EADDRINUSE') {
       logger.error(`Port ${port} is already in use. Please try a different port.`);

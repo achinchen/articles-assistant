@@ -25,7 +25,7 @@ export const DEFAULT_HYBRID_CONFIG: HybridSearchConfig = {
 export async function hybridRetrieveChunks(
   queryText: string,
   locale: Locale | undefined,
-  config: HybridSearchConfig | unknown
+  config: HybridSearchConfig
 ): Promise<RetrievedChunk[]> {
   const startTime = Date.now();
   
@@ -36,7 +36,10 @@ export async function hybridRetrieveChunks(
     const tsQuery = queryText
       .trim()
       .split(/\s+/)
-      .filter(word => word.length > 2)
+      .filter(word => {
+        const cleanWord = word.toLowerCase().replace(/[^\w]/g, '');
+        return cleanWord.length > 2 && !['and', 'the', 'for', 'but', 'not', 'you', 'all', 'our', 'out', 'too'].includes(cleanWord);
+      })
       .join(' & ');
         
     let sql = `

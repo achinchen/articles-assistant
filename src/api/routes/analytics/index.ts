@@ -4,7 +4,6 @@ import { query } from '@/db/client';
 
 const router: Router = Router();
 
-// GET /api/analytics/summary
 router.get('/summary', async (req, res, next) => {
   try {
     const days = parseInt(req.query.days as string) || 7;
@@ -58,7 +57,7 @@ router.get('/popular-queries', async (req, res, next) => {
 router.get('/performance', async (req, res, next) => {
   try {
     const hours = parseInt(req.query.hours as string) || 24;    
-    const result = db.query(
+    const result = await query(
       `SELECT
         DATE_TRUNC('hour', created_at) as hour,
         COUNT(*) as query_count,

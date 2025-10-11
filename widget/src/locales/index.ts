@@ -9,6 +9,7 @@ export interface LocaleMessages {
   failedToSend: string;
   retryButton: string;
   keyboardShortcuts: string;
+  thanksForFeedback: string;
 }
 
 export interface Locale {
@@ -32,6 +33,7 @@ export const locales: Record<string, Locale> = {
       failedToSend: 'Failed to send',
       retryButton: 'Retry',
       keyboardShortcuts: 'Press Enter to send, Shift+Enter for new line',
+      thanksForFeedback: 'Thanks for your feedback!',
     }
   },
   zh: {
@@ -48,6 +50,7 @@ export const locales: Record<string, Locale> = {
       failedToSend: '送出失敗',
       retryButton: '再試一次',
       keyboardShortcuts: '按下 Enter 送出，Shift+Enter 換行',
+      thanksForFeedback: '感謝您的回饋！',
     },
   }
 };

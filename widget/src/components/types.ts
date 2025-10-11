@@ -1,3 +1,5 @@
+export type Feedback = 1 | -1 | null;
+
 export interface Message {
   id: string;
   role: 'user' | 'assistant' | 'system';
@@ -5,6 +7,8 @@ export interface Message {
   sources?: Source[];
   timestamp: string;
   status?: 'sending' | 'sent' | 'error';
+  queryLogId?: number;
+  feedback?: Feedback;
 }
 
 export interface Source {

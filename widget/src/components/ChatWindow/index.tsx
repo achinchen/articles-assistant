@@ -15,7 +15,7 @@ export default function ChatWindow({
   apiUrl,
   onClose,
 }: ChatWindowProps) {
-  const { messages, isLoading, sendMessage, error } = useChat(apiUrl);
+  const { messages, isLoading, error, sendMessage, sendFeedback } = useChat(apiUrl);
   const { t } = useLocale();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -39,7 +39,7 @@ export default function ChatWindow({
         </div>
       ) :  (
         <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
-        <MessageList messages={messages} isLoading={isLoading} />
+        <MessageList messages={messages} isLoading={isLoading} onFeedback={sendFeedback} />
         <div ref={messagesEndRef} />
       </div>
       )}

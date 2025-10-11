@@ -1,4 +1,4 @@
-import type { WidgetConfig } from './Widget/types';
+import type { WidgetConfig } from './types';
 import { Suspense, useEffect } from 'react';
 import FloatingButton from './FloatingButton';
 import ChatWindow from './ChatWindow';
@@ -10,7 +10,6 @@ export default function Widget({
   primaryColor = '#0066FF',
   position = 'right',
   apiUrl,
-  locale,
 }: WidgetProps) {
   const { isOpen, toggle, close } = useWidget();
 

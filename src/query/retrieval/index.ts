@@ -83,13 +83,15 @@ export async function retrieveRelevantChunks(
       `;
       const debugResult = await query(debugSql, [JSON.stringify(queryEmbedding)]);
       logger.info('Top 5 similarities without threshold:', 
-        debugResult.rows.map(r => r.similarity)
+        debugResult.rows?.map(r => r.similarity)
       );
 
     } else {
       logger.info(`Similarity range: ${chunks[chunks.length - 1].similarity.toFixed(3)} - ${chunks[0].similarity.toFixed(3)}`);
     }
     
+    console.log({chunks})
+
     return chunks;
     
   } catch (error) {

@@ -1,4 +1,4 @@
-import type { Source } from "@/components/types";
+import type { Feedback, Source } from "@/components/types";
 
 export interface ApiResponse {
     success: boolean;
@@ -10,6 +10,7 @@ export interface ApiResponse {
         chunksRetrieved: number;
         model: string;
         responseTime: number;
+        queryLogId: number;
       };
     };
   }
@@ -33,4 +34,28 @@ export async function askQuestion(
 
   const data: ApiResponse = await response.json();
   return data.data;
+}
+
+export async function sendFeedback(
+  apiUrl: string,
+  queryLogId: number,
+  rating: Feedback,
+  feedbackText?: string
+): Promise<void> {
+  const response = await fetch(`${apiUrl}/api/feedback`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      queryLogId,
+      rating,
+      feedbackText,
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error?.message || 'Failed to send feedback');
+  }
 }

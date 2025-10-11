@@ -1,8 +1,6 @@
-import type { Message } from '@/components/types';
-
 const STORAGE_KEY = 'articles-assistant-chat';
-  
-export function saveMessages(messages: Message[]) {
+
+export function saveMessages(messages: any[]) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
   } catch (error) {
@@ -10,7 +8,7 @@ export function saveMessages(messages: Message[]) {
   }
 }
 
-export function loadMessages(): Message[] | [] {
+export function loadMessages(): any[] {
   try {
     const data = localStorage.getItem(STORAGE_KEY);
     return data ? JSON.parse(data) : [];

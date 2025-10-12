@@ -4,6 +4,7 @@ import { logger } from '@/utils/logger';
 import { validateAskRequest } from './validator';
 import { ApiError } from '@/api/errors';
 import { AnalyticsService } from '@/analytics/service';
+import { CacheService } from '@/cache/service';
 import { SEARCH_METHOD } from './constants';
 
 const router: Router = Router();
@@ -28,13 +29,26 @@ router.post('/', async (req, res, next) => {
       locale,
       useHybridSearch,
     });
-    
-    const result = await query({
-      query: queryText,
-      locale,
-      useHybridSearch,
-      config,
-    });
+
+    // Try to get from cache first
+    let result = await CacheService.get(queryText, locale, useHybridSearch, config);
+    let fromCache = true;
+
+    if (!result) {
+      fromCache = false;
+      // Cache miss - execute query
+      result = await query({
+        query: queryText,
+        locale,
+        useHybridSearch,
+        config,
+      });
+
+      // Cache the result (fire and forget)
+      CacheService.set(queryText, locale, useHybridSearch, result, config).catch(err => {
+        logger.warn('Failed to cache result:', err);
+      });
+    }
     
     const responseTime = Date.now() - startTime;
 
@@ -81,6 +95,7 @@ router.post('/', async (req, res, next) => {
           searchMethod: useHybridSearch ? SEARCH_METHOD.HYBRID : SEARCH_METHOD.VECTOR,
           queryLogId,
           requestId,
+          fromCache,
         },
       },
     });

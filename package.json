@@ -34,6 +34,12 @@
     "list:series": "ts-node cli/list.ts series",
     "list:articles": "ts-node cli/list.ts articles",
     "stats": "ts-node cli/stats.ts",
+    "// === Cache ===": "",
+    "cache": "ts-node cli/cache.ts",
+    "cache:info": "ts-node cli/cache.ts info",
+    "cache:metrics": "ts-node cli/cache.ts metrics",
+    "cache:clear": "ts-node cli/cache.ts clear",
+    "cache:test": "ts-node cli/cache.ts test",
     "// === Tools ===": "",
     "cost": "ts-node tools/estimate-cost.ts",
     "// === Testing ===": "",
@@ -42,13 +48,21 @@
     "test:integration": "vitest --run tests/integration",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
-    "test:coverage": "vitest --coverage"
+    "test:coverage": "vitest --coverage",
+    "test:cache": "vitest --run src/cache",
+    "test:monitoring": "vitest --run src/monitoring", 
+    "test:database": "vitest --run src/db",
+    "test:query-optimization": "vitest --run src/query/optimization",
+    "test:query-enhancement": "vitest --run src/query/enhancement",
+    "test:api-performance": "vitest --run src/api/routes/ask/performance.test.ts",
+    "test:optimization": "npm run test:cache && npm run test:monitoring && npm run test:database && npm run test:query-optimization && npm run test:query-enhancement"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.14.0",
   "dependencies": {
+    "@types/redis": "^4.0.11",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
@@ -57,7 +71,8 @@
     "gray-matter": "^4.0.3",
     "helmet": "^8.1.0",
     "openai": "^5.23.2",
-    "pg": "^8.16.3"
+    "pg": "^8.16.3",
+    "redis": "^5.8.3"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
@@ -66,10 +81,10 @@
     "@types/pg": "^8.15.5",
     "@types/supertest": "^6.0.3",
     "@vitest/ui": "^3.2.4",
+    "supertest": "^7.1.4",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.9.2",
-    "vitest": "^3.2.4",
-    "supertest": "^7.1.4"
+    "vitest": "^3.2.4"
   }
 }

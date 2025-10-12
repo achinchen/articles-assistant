@@ -11,6 +11,10 @@ import { errorMiddleware } from './routes/middle/error';
 import { loggerMiddleware } from './routes/middle/logger';
 import analyticsRouter from './routes/analytics';
 import feedbackRouter from './routes/feedback';
+import cacheRouter from './routes/cache';
+import optimizationRouter from './routes/optimization';
+import databaseRouter from './routes/database';
+import monitoringRouter from './routes/monitoring';
 
 export function createServer(port: number): Express {
   const app = express();
@@ -22,6 +26,7 @@ export function createServer(port: number): Express {
     const origin = req.headers.origin;
     const allowedOrigins = env.CORS_ORIGINS;
     
+    // Allow requests without origin (like test requests) or valid origins
     if (origin && !allowedOrigins.includes(origin)) {
       return res.status(403).json({
         success: false,
@@ -69,6 +74,10 @@ export function createServer(port: number): Express {
   app.use('/api/stats', statsRouter);
   app.use('/api/analytics', analyticsRouter);
   app.use('/api/feedback', feedbackRouter);
+  app.use('/api/cache', cacheRouter);
+  app.use('/api/optimization', optimizationRouter);
+  app.use('/api/database', databaseRouter);
+  app.use('/api/monitoring', monitoringRouter);
   
   app.get('/', (req, res) => {
     res.json({
@@ -78,6 +87,12 @@ export function createServer(port: number): Express {
         ask: 'POST /api/ask',
         health: 'GET /api/health',
         stats: 'GET /api/stats',
+        analytics: 'GET /api/analytics/*',
+        feedback: 'POST /api/feedback',
+        cache: 'GET /api/cache/*',
+        optimization: 'GET /api/optimization/*',
+        database: 'GET /api/database/*',
+        monitoring: 'GET /api/monitoring/*',
       },
     });
   });

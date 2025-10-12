@@ -59,6 +59,13 @@ export interface QueryResponse {
     sources: Source[];
     metadata: {
         queryLocale?: Locale;
+        originalQuery?: string;
+        actualQuery?: string;
+        queryEnhancement?: {
+            enhanced: boolean;
+            confidence: number;
+            expansions: string[];
+        };
         chunksRetrieved: number;
         chunksUsed: number;
         model: string;
@@ -69,6 +76,10 @@ export interface QueryResponse {
             total: number;
         };
         responseTime: number;
+        cached?: boolean;
+        cachedAt?: string;
+        cacheTtl?: number;
+        fromCache?: boolean;
     };
 }
 

@@ -22,7 +22,7 @@ export const env = {
   OPENAI_API_KEY: process.env.OPENAI_API_KEY || '',
   NODE_ENV: process.env.NODE_ENV || 'development',
   PORT: Number(process.env.PORT) || 3002,
-  CORS_ORIGINS: process.env.CORS_ORIGINS || '',
+  CORS_ORIGINS: (process.env.CORS_ORIGINS || 'http://localhost:3000,http://localhost:3001,http://localhost:3002').split(','),
   RATE_LIMIT_PER_MINUTE: parseInt(process.env.RATE_LIMIT_PER_MINUTE || '20'),
   
   validate() {

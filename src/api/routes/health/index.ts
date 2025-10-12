@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { query } from '@/db/client';
 import OpenAI from 'openai';
 import { env } from '@/utils/env';
+import { pingRedis } from '@/cache/client';
 
 const router: Router = Router();
 
@@ -9,6 +10,7 @@ router.get('/', async (req, res) => {
   const checks = {
     database: false,
     openai: false,
+    redis: false,
   };
   
   try {
@@ -25,8 +27,14 @@ router.get('/', async (req, res) => {
   } catch (error) {
     checks.openai = false;
   }
+
+  try {
+    checks.redis = await pingRedis();
+  } catch (error) {
+    checks.redis = false;
+  }
   
-  const isHealthy = checks.database && checks.openai;
+  const isHealthy = checks.database && checks.openai && checks.redis;
   const statusCode = isHealthy ? 200 : 503;
   
   res.status(statusCode).json({

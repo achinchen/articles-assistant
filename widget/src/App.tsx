@@ -12,8 +12,13 @@ declare global {
 
 function App() {
   const config = window.ArticlesAssistant || {
-    apiUrl: '',
-  };
+    apiUrl: import.meta.env.VITE_API_URL,
+    primaryColor: '#0066FF',
+    position: 'right',
+    greeting: 'How can I help you?',
+    target: '#root',
+    locale: 'zh',
+  } as WidgetConfig;
 
   return (
     <LocaleProvider locale={config.locale}>

@@ -144,3 +144,5 @@ export function startServer(port: number): void {
     });
   });
 }
+
+export default startServer;

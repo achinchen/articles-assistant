@@ -2,16 +2,26 @@ import request from 'supertest';
 import express, { type Express } from 'express';
 import ask from '.';
 import { SEARCH_METHOD } from './constants';
-import { query } from '@/db/client';
+import { query } from '@/query';
 
 vi.mock('@/analytics/service', () => ({
   AnalyticsService: {
-    logQuery: vi.fn(),
-    recordFeedback: vi.fn()
+    logQuery: vi.fn().mockResolvedValue({ id: 123 }),
+    recordFeedback: vi.fn(),
+    trackCost: vi.fn().mockResolvedValue(true),
+    logError: vi.fn().mockResolvedValue(true)
   }
 }));
 
-vi.mock('@/db/client', () => ({
+vi.mock('@/cache/service', () => ({
+  CacheService: {
+    get: vi.fn().mockResolvedValue(null),
+    set: vi.fn().mockResolvedValue(true),
+    buildCacheKey: vi.fn().mockReturnValue('test-cache-key')
+  }
+}));
+
+vi.mock('@/query', () => ({
   query: vi.fn()
 }));
 
@@ -22,6 +32,22 @@ describe('POST /api/ask', () => {
     app = express();
     app.use(express.json());
     app.use('/api/ask', ask);
+    
+    // Add proper ApiError handling like the real app
+    app.use((err: any, req: any, res: any, next: any) => {
+      // Handle ApiError instances
+      if (err.statusCode && err.code) {
+        return res.status(err.statusCode).json({
+          success: false,
+          error: err.message,
+          code: err.code
+        });
+      }
+      
+      // Generic error handler for debugging
+      console.error('Test error handler caught:', err);
+      res.status(500).json({ error: err.message, stack: err.stack });
+    });
   });
 
   beforeEach(async () => {
@@ -60,33 +86,35 @@ describe('POST /api/ask', () => {
       .send({
         query: 'What is Staff Engineer?',
         locale: 'en'
-      })
-      .expect(200);
+      });
     
-    // expect(response.body.success).toBe(true);
-    // expect(response.body.data).toHaveProperty('answer');
-    // expect(response.body.data).toHaveProperty('sources');
-    // expect(response.body.data).toHaveProperty('metadata');
+    if (response.status !== 200) {
+      console.error('Error response:', response.body);
+      console.error('Status:', response.status);
+    }
     
-    // expect(response.body.data.answer).toBeTruthy();
-    // expect(Array.isArray(response.body.data.sources)).toBe(true);
+    expect(response.status).toBe(200);
+    expect(response.body.success).toBe(true);
+    expect(response.body.data).toHaveProperty('answer');
+    expect(response.body.data).toHaveProperty('sources');
+    expect(response.body.data).toHaveProperty('metadata');
   });
   
-  it.skip('should return 400 for missing query', async () => {
+  it('should return 400 for missing query', async () => {
     await request(app)
       .post('/api/ask')
       .send({})
       .expect(400);
   });
   
-  it.skip('should return 400 for empty query', async () => {
+  it('should return 400 for empty query', async () => {
     await request(app)
       .post('/api/ask')
       .send({ query: '   ' })
       .expect(400);
   });
   
-  it.skip('should return 400 for invalid locale', async () => {
+  it('should return 400 for invalid locale', async () => {
     await request(app)
       .post('/api/ask')
       .send({
@@ -96,7 +124,7 @@ describe('POST /api/ask', () => {
       .expect(400);
   });
   
-  it.skip('should support hybrid search', async () => {
+  it('should support hybrid search', async () => {
     const response = await request(app)
       .post('/api/ask')
       .send({
@@ -108,7 +136,7 @@ describe('POST /api/ask', () => {
     expect(response.body.data.metadata.searchMethod).toBe(SEARCH_METHOD.HYBRID);
   }, 30000);
   
-  it.skip('should respect custom config', async () => {
+  it('should respect custom config', async () => {
     const response = await request(app)
       .post('/api/ask')
       .send({

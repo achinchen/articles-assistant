@@ -1,0 +1,105 @@
+name: Widget Build and Publish
+
+on:
+  push:
+    paths:
+      - 'widget/**'
+    branches: [ main, develop ]
+  pull_request:
+    paths:
+      - 'widget/**'
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'pnpm'
+        cache-dependency-path: 'widget/pnpm-lock.yaml'
+        registry-url: 'https://npm.pkg.github.com'
+        
+    - name: Install pnpm
+      uses: pnpm/action-setup@v2
+      with:
+        version: 8
+        
+    - name: Install dependencies
+      run: |
+        cd widget
+        pnpm install
+        
+    - name: Lint
+      run: |
+        cd widget
+        pnpm run lint
+        
+    - name: Build for development
+      run: |
+        cd widget
+        pnpm run build
+        
+    - name: Build for library
+      run: |
+        cd widget
+        pnpm run build:lib
+        
+    - name: Upload development build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: widget-dist-dev
+        path: widget/dist/
+        retention-days: 30
+        
+    - name: Upload library build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: widget-dist-lib
+        path: widget/dist/
+        retention-days: 30
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'pnpm'
+        cache-dependency-path: 'widget/pnpm-lock.yaml'
+        registry-url: 'https://npm.pkg.github.com'
+        
+    - name: Install pnpm
+      uses: pnpm/action-setup@v2
+      with:
+        version: 8
+        
+    - name: Install dependencies
+      run: |
+        cd widget
+        pnpm install
+        
+    - name: Build for library
+      run: |
+        cd widget
+        pnpm run build:lib
+        
+    - name: Publish to GitHub Packages
+      run: |
+        cd widget
+        pnpm publish --no-git-checks
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.PUBLISH_TOKEN }}

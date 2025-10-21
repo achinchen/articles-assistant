@@ -37,3 +37,4 @@ content/blog/*
 # Test
 coverage/
 .nyc_output/
+.vercel

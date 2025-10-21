@@ -186,6 +186,9 @@ For production or if you prefer using Supabase as your PostgreSQL provider:
    ```bash
    # Update your .env file with Supabase connection
    DATABASE_URL=postgresql://postgres.[PROJECT_REF]:[PASSWORD]@aws-1-[DB_ZONE].pooler.supabase.com:5432/postgres
+   
+   # For production, also consider using Upstash Redis for caching
+   REDIS_URL=rediss://default:[PASSWORD]@[ENDPOINT].upstash.io:6379
    ```
 
 The migration includes:
@@ -342,7 +345,7 @@ pnpm test:coverage
 | `PORT` | Server port | `3002` | ❌ |
 | `NODE_ENV` | Environment mode | `development` | ❌ |
 | `DATABASE_URL` | PostgreSQL connection string | Computed | ❌ |
-| `REDIS_URL` | Redis connection string | `redis://localhost:6379` | ❌ |
+| `REDIS_URL` | Redis connection string (local: `redis://localhost:6379`, Upstash: `rediss://default:[PASSWORD]@[ENDPOINT].upstash.io:6379`) | `redis://localhost:6379` | ❌ |
 | `CORS_ORIGINS` | Allowed CORS origins (comma-separated) | `localhost:3000,3001,3002` | ❌ |
 | `RATE_LIMIT_PER_MINUTE` | API rate limit | `20` | ❌ |
 

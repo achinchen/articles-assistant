@@ -135,6 +135,66 @@ docker-compose up -d
 docker-compose logs -f
 ```
 
+### Supabase Setup (Cloud Database)
+
+For production or if you prefer using Supabase as your PostgreSQL provider:
+
+1. **Create a Supabase project**
+   - Go to [supabase.com](https://supabase.com) and create a new project
+   - Note your project reference ID and database URL
+
+2. **Install Supabase CLI**
+   ```bash
+   npm install -g @supabase/cli
+   ```
+
+3. **Authenticate and link project**
+   ```bash
+   # Login to Supabase
+   supabase login
+   
+   # Link to your project (replace with your project ref)
+   supabase link --project-ref your-project-ref-id
+   ```
+
+4. **Apply database schema**
+   ```bash
+   # Apply the migration to create tables
+   supabase db push
+   ```
+
+5. **Seed your database** (choose one method):
+   
+   **Method A: Using psql directly**
+   ```bash
+   psql "your-supabase-database-url" -f supabase/seed.sql
+   ```
+   
+   **Method B: Using Supabase dashboard**
+   - Open your Supabase project dashboard
+   - Go to SQL Editor
+   - Copy and run the contents of `supabase/seed.sql`
+   
+   **Method C: Export from existing database**
+   ```bash
+   # If you have data in local PostgreSQL, export it first
+   npx ts-node scripts/export-data.ts
+   # Then import using Method A or B above
+   ```
+
+6. **Update environment variables**
+   ```bash
+   # Update your .env file with Supabase connection
+   DATABASE_URL=postgresql://postgres.[PROJECT_REF]:[PASSWORD]@aws-1-[DB_ZONE].pooler.supabase.com:5432/postgres
+   ```
+
+The migration includes:
+- ✅ Articles table with multilingual support
+- ✅ Chunks table for RAG text segments  
+- ✅ Embeddings table with pgvector support
+- ✅ Queries table for analytics
+- ✅ All necessary indexes for performance
+
 ## 📖 Usage
 
 ### API Endpoints

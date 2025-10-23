@@ -8,7 +8,7 @@ on:
   pull_request:
     paths:
       - 'widget/**'
-    branches: [ main ]
+    branches: [ develop, main ]
     
 jobs:
   build:
@@ -98,4 +98,4 @@ jobs:
         cd widget
         pnpm publish --no-git-checks
       env:
-        NODE_AUTH_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }

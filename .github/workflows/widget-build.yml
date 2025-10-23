@@ -8,8 +8,8 @@ on:
   pull_request:
     paths:
       - 'widget/**'
-    branches: [ develop ]
-
+    branches: [ develop, main ]
+    
 jobs:
   build:
     runs-on: ubuntu-latest

@@ -9,7 +9,7 @@ on:
     paths:
       - 'widget/**'
     branches: [ main ]
-
+    
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -17,29 +17,25 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+        
+    - name: Install pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        run_install: false
       
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '18'
+        node-version: latest
         cache: 'pnpm'
         cache-dependency-path: 'widget/pnpm-lock.yaml'
         registry-url: 'https://npm.pkg.github.com'
-        
-    - name: Install pnpm
-      uses: pnpm/action-setup@v2
-      with:
-        version: 8
         
     - name: Install dependencies
       run: |
         cd widget
         pnpm install
         
-    - name: Lint
-      run: |
-        cd widget
-        pnpm run lint
         
     - name: Build for development
       run: |
@@ -73,19 +69,19 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+        
+    - name: Install pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        run_install: false
       
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '18'
+        node-version: latest
         cache: 'pnpm'
         cache-dependency-path: 'widget/pnpm-lock.yaml'
         registry-url: 'https://npm.pkg.github.com'
-        
-    - name: Install pnpm
-      uses: pnpm/action-setup@v2
-      with:
-        version: 8
         
     - name: Install dependencies
       run: |

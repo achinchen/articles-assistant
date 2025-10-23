@@ -4,7 +4,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 
-export default defineConfig(({ command }) => {
+export default defineConfig(({ command, mode }) => {
   if (command === 'serve') {
     return {
       plugins: [react()],
@@ -23,6 +23,8 @@ export default defineConfig(({ command }) => {
     };
   }
 
+  const isLibMode = mode === 'lib';
+
   return {
     plugins: [react()],
     resolve: {
@@ -30,7 +32,32 @@ export default defineConfig(({ command }) => {
         '@': resolve(__dirname, 'src'),
       },
     },
-    build: {
+    build: isLibMode ? {
+      lib: {
+        entry: {
+          sdk: resolve(__dirname, 'src/sdk.ts'),
+          widget: resolve(__dirname, 'src/main.tsx'),
+        },
+        formats: ['es'],
+        fileName: (_, entryName) => `${entryName}.js`,
+      },
+      rollupOptions: {
+        external: ['react', 'react-dom'],
+        output: {
+          globals: {
+            react: 'React',
+            'react-dom': 'ReactDOM',
+          },
+          assetFileNames: (assetInfo) => {
+            if (assetInfo.names?.[0] === 'style.css') return 'widget.css';
+            return assetInfo.names?.[0] || 'asset';
+          },
+        },
+      },
+      outDir: 'dist',
+      emptyOutDir: true,
+      minify: true,
+    } : {
       rollupOptions: {
         input: {
           widget: resolve(__dirname, 'src/main.tsx'),

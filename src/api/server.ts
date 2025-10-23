@@ -16,7 +16,7 @@ import optimizationRouter from './routes/optimization';
 import databaseRouter from './routes/database';
 import monitoringRouter from './routes/monitoring';
 
-export function createServer(port: number): Express {
+function createServer(port: number): Express {
   const app = express();
   
   app.use(helmet());
@@ -112,7 +112,7 @@ export function createServer(port: number): Express {
   return app;
 }
 
-export function startServer(port: number): void {
+export function startServer(port: number): Express {
   const app = createServer(port);
   
   const server = app.listen(port, () => {
@@ -143,4 +143,6 @@ export function startServer(port: number): void {
       process.exit(0);
     });
   });
+
+  return app;
 }

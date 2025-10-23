@@ -1,12 +1,39 @@
 {
-  "name": "articles-assistant-widget",
+  "name": "@achinchen/articles-assistant-widget",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/achinchen/articles-assistant.git",
+    "directory": "widget"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "version": "1.0.0",
   "type": "module",
+  "main": "./dist/sdk.js",
+  "module": "./dist/sdk.js",
+  "types": "./dist/sdk.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/sdk.js",
+      "types": "./dist/sdk.d.ts"
+    },
+    "./widget": {
+      "import": "./dist/widget.js"
+    },
+    "./style.css": "./dist/widget.css"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "build:lib": "tsc && vite build --mode lib",
     "preview": "vite preview",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "prepublishOnly": "npm run build:lib"
   },
   "dependencies": {
     "react": "^18.2.0",

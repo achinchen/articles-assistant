@@ -2,7 +2,7 @@
   "name": "articles-assistant",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/src/index.js",
   "scripts": {
     "// === Submodule ===": "",
     "submodule:init": "bash scripts/setup-submodule.sh",
@@ -18,10 +18,10 @@
     "db:shell": "bash scripts/db/shell.sh",
     "db:status": "ts-node -e \"import { pool } from '@/db/client'; pool.query('SELECT COUNT(*) FROM articles').then(r => console.log('Articles:', r.rows[0].count)).catch(e => console.error('Error:', e.message)).finally(() => pool.end());\"",
     "// === API Server ===": "",
-    "api:dev": "ts-node cli/api.ts",
-    "api:start": "NODE_ENV=production ts-node cli/api.ts",
-    "api:build": "tsc -p tsconfig.json",
-    "api:prod": "node dist/cli/api.js",
+    "api:dev": "ts-node src/api/index.ts",
+    "api:start": "NODE_ENV=production ts-node src/api/index.ts",
+    "api:build": "tsc && tsc-alias",
+    "api:prod": "node dist/src/api/index.js",
     "// === Ingestion ===": "",
     "ingest": "ts-node cli/ingest.ts",
     "ingest:fresh": "npm run submodule:update && npm run ingest",
@@ -50,7 +50,7 @@
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
     "test:cache": "vitest --run src/cache",
-    "test:monitoring": "vitest --run src/monitoring", 
+    "test:monitoring": "vitest --run src/monitoring",
     "test:database": "vitest --run src/db",
     "test:query-optimization": "vitest --run src/query/optimization",
     "test:query-enhancement": "vitest --run src/query/enhancement",
@@ -61,6 +61,10 @@
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.14.0",
+  "_moduleAliases": {
+    "@": "dist/src",
+    "@config": "dist/config"
+  },
   "dependencies": {
     "@types/redis": "^4.0.11",
     "cors": "^2.8.5",
@@ -70,9 +74,11 @@
     "gpt-3-encoder": "^1.1.4",
     "gray-matter": "^4.0.3",
     "helmet": "^8.1.0",
+    "module-alias": "^2.2.3",
     "openai": "^5.23.2",
     "pg": "^8.16.3",
-    "redis": "^5.8.3"
+    "redis": "^5.8.3",
+    "tsconfig-paths": "^4.2.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
@@ -80,9 +86,11 @@
     "@types/node": "^24.6.0",
     "@types/pg": "^8.15.5",
     "@types/supertest": "^6.0.3",
+    "@vercel/node": "^5.4.1",
     "@vitest/ui": "^3.2.4",
     "supertest": "^7.1.4",
     "ts-node": "^10.9.2",
+    "tsc-alias": "^1.8.16",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4"
